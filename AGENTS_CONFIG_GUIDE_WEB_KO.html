@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>비개발자용 Codex 가이드 | AGENTS.md + config.toml</title>
+  <style>
+    :root {
+      --bg: #f7f3ea;
+      --paper: #fffaf2;
+      --ink: #1f2a2d;
+      --muted: #4f5d63;
+      --line: #d8cdb7;
+      --accent: #0f766e;
+      --accent-2: #c45e1a;
+      --card: #fffdf8;
+      --ok: #2d6a4f;
+      --warn: #b45309;
+      --shadow: 0 12px 30px rgba(31, 42, 45, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(15, 118, 110, 0.12) 0, transparent 34%),
+        radial-gradient(circle at 92% 16%, rgba(196, 94, 26, 0.12) 0, transparent 32%),
+        linear-gradient(180deg, #f8f4ec 0%, #f3ede1 100%);
+      font-family: "Pretendard Variable", "SUIT", "Avenir Next", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      line-height: 1.6;
+    }
+
+    .page {
+      width: min(980px, 92vw);
+      margin: 0 auto;
+      padding: 36px 0 80px;
+    }
+
+    .hero {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 34px 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      animation: rise 520ms ease-out both;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -80px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(196, 94, 26, 0.2), transparent 70%);
+      pointer-events: none;
+    }
+
+    .kicker {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.1);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 4.8vw, 46px);
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(16px, 2.1vw, 19px);
+    }
+
+    .meta {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      animation: rise 600ms ease-out both;
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .section {
+      margin-top: 30px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px 22px;
+      box-shadow: var(--shadow);
+      animation: rise 680ms ease-out both;
+    }
+
+    .section h3 {
+      margin: 0 0 12px;
+      font-size: clamp(22px, 2.6vw, 30px);
+      letter-spacing: -0.01em;
+    }
+
+    .section p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .steps {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .steps li {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-right: 8px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.14);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+
+    .tip {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #fff;
+      border-left: 4px solid var(--accent-2);
+      color: var(--ink);
+    }
+
+    .checklist {
+      margin: 12px 0 0;
+      padding-left: 18px;
+    }
+
+    .checklist li {
+      margin: 8px 0;
+      color: var(--ink);
+    }
+
+    .ok {
+      color: var(--ok);
+      font-weight: 700;
+    }
+
+    .warn {
+      color: var(--warn);
+      font-weight: 700;
+    }
+
+    .code {
+      margin-top: 12px;
+      background: #1f2428;
+      color: #f6f8fa;
+      border-radius: 12px;
+      padding: 14px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.55;
+      border: 1px solid #15191c;
+      font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
+    }
+
+    details {
+      margin-top: 10px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .links {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .links a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(15, 118, 110, 0.45);
+      width: fit-content;
+    }
+
+    .links a:hover {
+      color: #0b4f49;
+    }
+
+    .footer {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .page {
+        width: min(980px, 94vw);
+        padding-top: 22px;
+      }
+
+      .hero {
+        padding: 24px 18px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        padding: 18px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <span class="kicker">비개발자용 안내서</span>
+      <h1>Codex 설정, 딱 두 파일만 알면 됩니다</h1>
+      <p class="sub">
+        <strong>`AGENTS.md`</strong>는 "일하는 방식 설명서", <strong>`config.toml`</strong>은 "기본 동작 스위치"입니다.
+        이 페이지는 개발 용어를 최소화해서, 팀 운영 관점에서 바로 이해할 수 있게 정리했습니다.
+      </p>
+      <p class="meta">최종 업데이트: 2026-02-16 | 기준: OpenAI Codex 공식 문서</p>
+    </section>
+
+    <section class="grid">
+      <article class="card" style="animation-delay: 90ms;">
+        <h2>1) `AGENTS.md`가 하는 일</h2>
+        <p>
+          "이 프로젝트에서는 어떤 순서로, 어떤 기준으로 작업할지"를 Codex에게 알려주는 안내문입니다.
+          팀 규칙이 바뀌면 여기부터 수정합니다.
+        </p>
+      </article>
+      <article class="card" style="animation-delay: 160ms;">
+        <h2>2) `config.toml`이 하는 일</h2>
+        <p>
+          모델, 승인 방식, 샌드박스 같은 "동작 기본값"을 정하는 설정 파일입니다.
+          개인/프로젝트 공통 정책을 안정적으로 고정할 때 사용합니다.
+        </p>
+      </article>
+    </section>
+
+    <section class="section" style="animation-delay: 220ms;">
+      <h3>어디에 두면 되나요?</h3>
+      <ul class="steps">
+        <li><span class="badge">전역</span>`~/.codex/AGENTS.md` : 모든 프로젝트 공통 작업 지침</li>
+        <li><span class="badge">프로젝트</span>`(프로젝트 루트)/AGENTS.md` : 해당 프로젝트 전용 지침</li>
+        <li><span class="badge">전역 설정</span>`~/.codex/config.toml` : 기본 실행 정책</li>
+        <li><span class="badge">프로젝트 설정</span>`(프로젝트)/.codex/config.toml` : 해당 프로젝트만 다른 정책</li>
+      </ul>
+      <p class="tip">
+        핵심 기억: <strong>가까운 위치의 규칙이 보통 더 강하게 적용</strong>됩니다.
+        (예: 프로젝트 폴더 안 설정이 전역 설정보다 우선되는 경우)
+      </p>
+    </section>
+
+    <section class="section" style="animation-delay: 300ms;">
+      <h3>비개발자 기준 실무 운영 순서</h3>
+      <ul class="steps">
+        <li><span class="badge">Step 1</span>전역 `AGENTS.md`에 조직 공통 원칙만 적습니다. (보안, 리뷰, 테스트 최소 기준)</li>
+        <li><span class="badge">Step 2</span>각 저장소 `AGENTS.md`에 팀별 실행 방법을 적습니다. (빌드 명령, 배포 체크)</li>
+        <li><span class="badge">Step 3</span>`config.toml`에 승인/샌드박스 정책을 고정합니다.</li>
+        <li><span class="badge">Step 4</span>위험 명령은 `.rules`에서 `prompt` 또는 `forbidden`로 막습니다.</li>
+      </ul>
+      <p class="tip">
+        권장 운영: <span class="ok">공통 규칙은 짧게</span>, <span class="warn">프로젝트별 예외는 로컬 파일에 분리</span>.
+      </p>
+    </section>
+
+    <section class="section" style="animation-delay: 360ms;">
+      <h3>바로 복붙 가능한 최소 템플릿</h3>
+      <p>아래 두 블록만 먼저 적용해도 운영 품질이 빠르게 안정됩니다.</p>
+
+      <p><strong>A. `AGENTS.md` (프로젝트 루트)</strong></p>
+      <pre class="code"># AGENTS.md instructions for /absolute/path/to/repo
+
+## Build &amp; Test
+- Install: `pnpm install`
+- Test: `pnpm test`
+- Lint: `pnpm lint`
+
+## Safety
+- Do not run destructive git commands without explicit approval.
+- Never modify production secrets.
+
+## Change Policy
+- Any behavior change must include related docs and tests.</pre>
+
+      <p><strong>B. `~/.codex/config.toml` (전역)</strong></p>
+      <pre class="code">model = "gpt-5.3-codex"
+personality = "pragmatic"
+model_reasoning_effort = "xhigh"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[projects."/absolute/path/to/repo"]
+trust_level = "trusted"</pre>
+    </section>
+
+    <section class="section" style="animation-delay: 420ms;">
+      <h3>운영 체크리스트 (회의용)</h3>
+      <ul class="checklist">
+        <li>전역 규칙과 프로젝트 규칙의 역할이 분리되어 있다.</li>
+        <li>팀이 실제 쓰는 테스트/검증 명령이 `AGENTS.md`에 명시되어 있다.</li>
+        <li>승인 정책(`approval_policy`)이 조직 보안 레벨과 맞다.</li>
+        <li>위험 명령은 `.rules`로 최소 `prompt` 처리되어 있다.</li>
+        <li>신규 프로젝트 시작 시 템플릿을 복사해 일관되게 적용한다.</li>
+      </ul>
+    </section>
+
+    <section class="section" style="animation-delay: 500ms;">
+      <h3>자주 묻는 질문</h3>
+
+      <details>
+        <summary>Q1. 저는 개발자가 아닌데 꼭 `config.toml`까지 알아야 하나요?</summary>
+        <p>
+          네. 실제 사고는 코드보다 설정에서 나는 경우가 많습니다.
+          최소한 승인 정책과 샌드박스 모드 두 가지는 운영 담당자도 확인할 수 있어야 합니다.
+        </p>
+      </details>
+
+      <details>
+        <summary>Q2. 왜 파일을 전역/프로젝트로 나누나요?</summary>
+        <p>
+          공통 원칙(회사 정책)은 한 곳에서 유지하고, 프로젝트 차이(명령어/배포 방식)는 각 저장소에서 관리해야 변경 충돌이 줄어듭니다.
+        </p>
+      </details>
+
+      <details>
+        <summary>Q3. 문서가 너무 길어지면 어떻게 하나요?</summary>
+        <p>
+          전역 파일은 원칙만 남기고, 상세 절차는 프로젝트 파일로 내리세요.
+          "누가 봐도 바로 실행 가능한 문장"만 남기면 유지보수가 쉬워집니다.
+        </p>
+      </details>
+    </section>
+
+    <section class="section" style="animation-delay: 560ms;">
+      <h3>공식 문서</h3>
+      <div class="links">
+        <a href="https://developers.openai.com/codex/guides/agents-md" target="_blank" rel="noopener noreferrer">AGENTS.md guide</a>
+        <a href="https://developers.openai.com/codex/config-basic" target="_blank" rel="noopener noreferrer">Config basics</a>
+        <a href="https://developers.openai.com/codex/config-advanced" target="_blank" rel="noopener noreferrer">Config advanced</a>
+        <a href="https://developers.openai.com/codex/config-reference" target="_blank" rel="noopener noreferrer">Config reference</a>
+        <a href="https://developers.openai.com/codex/config-sample" target="_blank" rel="noopener noreferrer">Config sample</a>
+        <a href="https://developers.openai.com/codex/rules" target="_blank" rel="noopener noreferrer">Rules guide</a>
+      </div>
+      <p class="footer">
+        이 페이지는 비개발자 독자를 위한 요약본입니다. 세부 기술 스펙은 공식 레퍼런스를 함께 확인하세요.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

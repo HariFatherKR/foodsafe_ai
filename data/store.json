@@ -1,0 +1,297 @@
+{
+  "ingredients": [
+    {
+      "id": "ing-1",
+      "name": "Milk",
+      "supplier": "SafeFoods",
+      "createdAt": "2026-02-16T09:00:00.000Z"
+    },
+    {
+      "id": "ing-2",
+      "name": "Egg",
+      "supplier": "GreenFarm",
+      "createdAt": "2026-02-16T09:00:00.000Z"
+    },
+    {
+      "id": "188b08a4-beb4-4d26-8139-1c96abeb3442",
+      "name": "양파",
+      "createdAt": "2026-02-16T04:56:08.576Z"
+    },
+    {
+      "id": "4af22366-df76-406f-aaaf-0d996ddf7141",
+      "name": "닭고기",
+      "createdAt": "2026-02-16T05:13:04.472Z"
+    },
+    {
+      "id": "690db5a2-970a-4bfb-975c-88dc03fd4c59",
+      "name": "우유",
+      "createdAt": "2026-02-16T05:13:04.472Z"
+    },
+    {
+      "id": "d93a6052-db3c-41b7-a361-866cbf03d5f4",
+      "name": "두쫀쿠",
+      "createdAt": "2026-02-16T05:13:04.472Z"
+    },
+    {
+      "id": "71604b62-4ab7-48c4-aedf-9d11aca9bc52",
+      "name": "쌀",
+      "createdAt": "2026-02-16T05:13:04.472Z"
+    },
+    {
+      "id": "5e88147b-9d05-4daf-bb98-7882c72e917f",
+      "name": "잡곡",
+      "createdAt": "2026-02-16T05:13:04.472Z"
+    },
+    {
+      "id": "13e2454c-63ee-4e71-8174-8e5c4bee6f98",
+      "name": "계란",
+      "createdAt": "2026-02-16T05:13:04.472Z"
+    },
+    {
+      "id": "c431ca96-5322-44e1-84d7-d8e9d3583295",
+      "name": "콩나물",
+      "createdAt": "2026-02-16T05:13:04.472Z"
+    },
+    {
+      "id": "e0a4d4c7-8660-4072-946c-aca7c33a08ab",
+      "name": "닭고기",
+      "createdAt": "2026-02-16T05:13:06.191Z"
+    },
+    {
+      "id": "080b8cd3-b53c-4540-96d5-7ed44fda84ea",
+      "name": "우유",
+      "createdAt": "2026-02-16T05:13:06.191Z"
+    },
+    {
+      "id": "efaa6bbd-6ac4-4de9-bc51-c303d4f5d740",
+      "name": "두쫀쿠",
+      "createdAt": "2026-02-16T05:13:06.191Z"
+    },
+    {
+      "id": "42cae83a-946b-4536-ac0b-a0dbdcae8557",
+      "name": "쌀",
+      "createdAt": "2026-02-16T05:13:06.191Z"
+    },
+    {
+      "id": "ef9d40d3-8562-4f29-b554-940036a22ca1",
+      "name": "잡곡",
+      "createdAt": "2026-02-16T05:13:06.191Z"
+    },
+    {
+      "id": "d207cdbe-4e24-459a-ada5-139089259263",
+      "name": "계란",
+      "createdAt": "2026-02-16T05:13:06.191Z"
+    },
+    {
+      "id": "da6b38f0-2cbc-4b21-a067-0d82851d689a",
+      "name": "콩나물",
+      "createdAt": "2026-02-16T05:13:06.191Z"
+    }
+  ],
+  "riskEvents": [
+    {
+      "id": "risk-1",
+      "ingredientName": "Milk",
+      "level": "danger",
+      "sourceType": "recall",
+      "sourceTitle": "우유 리콜 공지",
+      "sourceDate": "2026-02-15",
+      "sourceUrl": "https://example.com/recall/milk",
+      "autoMatched": true,
+      "suggestedSubstitute": "두유",
+      "createdAt": "2026-02-16T09:00:00.000Z"
+    }
+  ],
+  "menuPlans": [
+    {
+      "id": "menu-1",
+      "constraints": {
+        "people": 120,
+        "budget": 450000,
+        "allergies": [
+          "milk"
+        ]
+      },
+      "days": [
+        {
+          "day": "Monday",
+          "items": [
+            "Rice",
+            "Tofu Soup",
+            "Chicken Salad"
+          ],
+          "allergyWarnings": [
+            "milk"
+          ],
+          "substitutions": [
+            "두유 소스"
+          ]
+        }
+      ],
+      "createdAt": "2026-02-16T09:00:00.000Z"
+    },
+    {
+      "id": "830e97a0-0998-48ec-8f3a-6c74dd2ea463",
+      "constraints": {
+        "people": 100,
+        "budget": 500000,
+        "allergies": [
+          "두유"
+        ]
+      },
+      "days": [
+        {
+          "day": "Monday",
+          "items": [
+            "Rice",
+            "Chicken Soup",
+            "Kimchi"
+          ],
+          "allergyWarnings": [
+            "두유"
+          ],
+          "substitutions": []
+        },
+        {
+          "day": "Tuesday",
+          "items": [
+            "Barley Rice",
+            "Bean Sprout Soup",
+            "Tofu Steak"
+          ],
+          "allergyWarnings": [
+            "두유"
+          ],
+          "substitutions": []
+        },
+        {
+          "day": "Wednesday",
+          "items": [
+            "Rice",
+            "Seaweed Soup",
+            "Stir-fried Pork"
+          ],
+          "allergyWarnings": [
+            "두유"
+          ],
+          "substitutions": []
+        },
+        {
+          "day": "Thursday",
+          "items": [
+            "Rice",
+            "Soybean Soup",
+            "Grilled Fish"
+          ],
+          "allergyWarnings": [
+            "두유"
+          ],
+          "substitutions": []
+        },
+        {
+          "day": "Friday",
+          "items": [
+            "Rice",
+            "Vegetable Soup",
+            "Chicken Stir-fry"
+          ],
+          "allergyWarnings": [
+            "두유"
+          ],
+          "substitutions": []
+        }
+      ],
+      "createdAt": "2026-02-16T04:56:22.046Z"
+    },
+    {
+      "id": "4c8ac11d-f652-41ba-ba67-e1b2a6b08333",
+      "constraints": {
+        "people": 100,
+        "budget": 500000,
+        "allergies": []
+      },
+      "days": [
+        {
+          "day": "월요일",
+          "items": [
+            "쌀밥",
+            "닭곰탕",
+            "김치"
+          ],
+          "allergyWarnings": [],
+          "substitutions": []
+        },
+        {
+          "day": "화요일",
+          "items": [
+            "보리밥",
+            "콩나물국",
+            "두부구이"
+          ],
+          "allergyWarnings": [],
+          "substitutions": []
+        },
+        {
+          "day": "수요일",
+          "items": [
+            "쌀밥",
+            "미역국",
+            "제육볶음"
+          ],
+          "allergyWarnings": [],
+          "substitutions": []
+        },
+        {
+          "day": "목요일",
+          "items": [
+            "쌀밥",
+            "된장국",
+            "생선구이"
+          ],
+          "allergyWarnings": [],
+          "substitutions": []
+        },
+        {
+          "day": "금요일",
+          "items": [
+            "쌀밥",
+            "채소수프",
+            "닭가슴살볶음"
+          ],
+          "allergyWarnings": [],
+          "substitutions": []
+        }
+      ],
+      "createdAt": "2026-02-16T05:13:12.332Z"
+    }
+  ],
+  "parentNotices": [
+    {
+      "id": "notice-1",
+      "title": "우유 리콜 관련 안내",
+      "body": "우유 식자재를 대체 식자재로 교체했습니다.",
+      "riskEventIds": [
+        "risk-1"
+      ],
+      "menuPlanId": "menu-1",
+      "createdAt": "2026-02-16T09:00:00.000Z"
+    },
+    {
+      "id": "a8e7dabd-31cd-4e22-82e1-e7a7b1362247",
+      "title": "[안전공지] 메뉴/안전 업데이트",
+      "body": "새로운 메뉴와 안전 현황을 반영했습니다.",
+      "riskEventIds": [],
+      "menuPlanId": "830e97a0-0998-48ec-8f3a-6c74dd2ea463",
+      "createdAt": "2026-02-16T04:57:00.563Z"
+    },
+    {
+      "id": "7ea42593-77b4-414f-85d4-99afc7133278",
+      "title": "[안전공지] 메뉴/안전 업데이트",
+      "body": "새로운 메뉴와 안전 현황을 반영했습니다.",
+      "riskEventIds": [],
+      "menuPlanId": "4c8ac11d-f652-41ba-ba67-e1b2a6b08333",
+      "createdAt": "2026-02-16T05:13:30.084Z"
+    }
+  ],
+  "lastSyncedAt": "2026-02-16T09:00:00.000Z"
+}

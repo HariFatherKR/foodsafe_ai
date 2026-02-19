@@ -1,0 +1,19 @@
+<svg width="1440" height="920" viewBox="0 0 1440 920" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="72" y1="58" x2="1324" y2="864" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F5C39"/>
+      <stop offset="1" stop-color="#249461"/>
+    </linearGradient>
+  </defs>
+  <rect width="1440" height="920" fill="url(#bg)"/>
+  <circle cx="1110" cy="220" r="180" fill="#43B47E" fill-opacity="0.35"/>
+  <circle cx="310" cy="780" r="240" fill="#8CD5AF" fill-opacity="0.26"/>
+  <rect x="178" y="184" width="1084" height="552" rx="36" fill="white" fill-opacity="0.16"/>
+  <rect x="238" y="250" width="520" height="70" rx="14" fill="white" fill-opacity="0.62"/>
+  <rect x="238" y="344" width="378" height="46" rx="10" fill="white" fill-opacity="0.45"/>
+  <rect x="238" y="412" width="602" height="46" rx="10" fill="white" fill-opacity="0.45"/>
+  <rect x="238" y="508" width="202" height="54" rx="27" fill="#E4F5EB"/>
+  <rect x="238" y="596" width="772" height="88" rx="12" fill="white" fill-opacity="0.33"/>
+  <text x="256" y="301" fill="#0F5C39" font-size="44" font-family="Pretendard, sans-serif" font-weight="800">학부모 안전 피드</text>
+  <text x="256" y="380" fill="white" font-size="28" font-family="Pretendard, sans-serif" font-weight="600">오늘의 공지와 급식 정보를 한 번에 확인</text>
+</svg>
