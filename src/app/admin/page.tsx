@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import { HeaderRoleSwitch } from "@/components/common/HeaderRoleSwitch";
 import { RoleChangeLogTable } from "@/components/admin/RoleChangeLogTable";
 import { UserRoleTable } from "@/components/admin/UserRoleTable";
@@ -43,16 +42,28 @@ function messageFromParams(params: { status?: string; error?: string }) {
 
 export default async function AdminPage({ searchParams }: AdminPageProps) {
   const params = (await searchParams) ?? {};
-  const profile = await getCurrentProfile();
-
-  if (!profile || !canAccessAdminPage(profile.role)) {
-    redirect("/");
+  let profile = null;
+  try {
+    profile = await getCurrentProfile();
+  } catch {
+    profile = null;
   }
 
-  const [users, logs] = await Promise.all([
-    listProfilesForAdmin(),
-    listRoleChangeLogsForAdmin(),
-  ]);
+  const canManage = Boolean(profile && canAccessAdminPage(profile.role));
+  let users: Awaited<ReturnType<typeof listProfilesForAdmin>> = [];
+  let logs: Awaited<ReturnType<typeof listRoleChangeLogsForAdmin>> = [];
+
+  if (canManage) {
+    try {
+      [users, logs] = await Promise.all([
+        listProfilesForAdmin(),
+        listRoleChangeLogsForAdmin(),
+      ]);
+    } catch {
+      users = [];
+      logs = [];
+    }
+  }
 
   const message = messageFromParams(params);
 
@@ -63,9 +74,13 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
 
         <section className="story-panel fade-up">
           <h1>관리자 권한 관리</h1>
-          <p>
-            로그인 계정: <strong>{profile.email}</strong> ({profile.role})
-          </p>
+          {profile ? (
+            <p>
+              로그인 계정: <strong>{profile.email}</strong> ({profile.role})
+            </p>
+          ) : (
+            <p>공개 모드입니다. 모든 페이지에 로그인 없이 접근할 수 있습니다.</p>
+          )}
           {message ? (
             <p
               className={`pill-chip ${
@@ -81,14 +96,24 @@ export default async function AdminPage({ searchParams }: AdminPageProps) {
           ) : null}
         </section>
 
-        <div className="story-grid">
-          <UserRoleTable
-            users={users}
-            currentUserId={profile.id}
-            onChangeRole={updateUserRoleAction}
-          />
-          <RoleChangeLogTable logs={logs} />
-        </div>
+        {canManage && profile ? (
+          <div className="story-grid">
+            <UserRoleTable
+              users={users}
+              currentUserId={profile.id}
+              onChangeRole={updateUserRoleAction}
+            />
+            <RoleChangeLogTable logs={logs} />
+          </div>
+        ) : (
+          <section className="story-panel fade-up">
+            <h2>권한 관리 기능</h2>
+            <p>
+              현재는 공개 모드로 운영 중이며, 권한 변경 기능은 로그인/권한 설정 후
+              활성화됩니다.
+            </p>
+          </section>
+        )}
       </div>
     </main>
   );
