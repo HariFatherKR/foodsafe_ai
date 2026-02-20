@@ -1,5 +1,8 @@
 const OPENAI_CHAT_COMPLETIONS_URL = "https://api.openai.com/v1/chat/completions";
 const DEFAULT_OPENAI_MODEL = "gpt-5.2";
+const REQUEST_TIMEOUT_MS = 8_000;
+const MAX_ATTEMPTS = 3;
+const RETRY_BACKOFF_MS = [300, 600];
 
 const MENU_PLAN_SCHEMA = {
   type: "object",
@@ -81,6 +84,81 @@ function extractMessageContent(payload: unknown): string | null {
   return joined.length > 0 ? joined : null;
 }
 
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status >= 500;
+}
+
+function isRetryableError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return error.name === "AbortError" || error.name === "TypeError";
+}
+
+function toError(error: unknown): Error {
+  if (error instanceof Error) {
+    return error;
+  }
+
+  return new Error(String(error));
+}
+
+function backoffDelayMs(attempt: number): number {
+  return RETRY_BACKOFF_MS[attempt - 1] ?? RETRY_BACKOFF_MS[RETRY_BACKOFF_MS.length - 1] ?? 0;
+}
+
+function buildRequestBody(model: string, prompt: string): string {
+  return JSON.stringify({
+    model,
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "menu_plan",
+        strict: true,
+        schema: MENU_PLAN_SCHEMA,
+      },
+    },
+  });
+}
+
+async function sleep(ms: number): Promise<void> {
+  if (ms <= 0) {
+    return;
+  }
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function fetchWithTimeout(
+  apiKey: string,
+  model: string,
+  prompt: string,
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    return await fetch(OPENAI_CHAT_COMPLETIONS_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: buildRequestBody(model, prompt),
+      cache: "no-store",
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function generateOpenAiMenuJson(prompt: string): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
@@ -88,41 +166,41 @@ export async function generateOpenAiMenuJson(prompt: string): Promise<string> {
   }
 
   const model = process.env.OPENAI_MODEL ?? DEFAULT_OPENAI_MODEL;
-  const response = await fetch(OPENAI_CHAT_COMPLETIONS_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "menu_plan",
-          strict: true,
-          schema: MENU_PLAN_SCHEMA,
-        },
-      },
-    }),
-    cache: "no-store",
-  });
+  let lastError: Error | null = null;
 
-  if (!response.ok) {
-    throw new Error(`OpenAI request failed: ${response.status}`);
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+    let response: Response;
+
+    try {
+      response = await fetchWithTimeout(apiKey, model, prompt);
+    } catch (error) {
+      const current = toError(error);
+      if (attempt < MAX_ATTEMPTS && isRetryableError(current)) {
+        lastError = current;
+        await sleep(backoffDelayMs(attempt));
+        continue;
+      }
+      throw current;
+    }
+
+    if (!response.ok) {
+      const statusError = new Error(`OpenAI request failed: ${response.status}`);
+      if (attempt < MAX_ATTEMPTS && isRetryableStatus(response.status)) {
+        lastError = statusError;
+        await sleep(backoffDelayMs(attempt));
+        continue;
+      }
+      throw statusError;
+    }
+
+    const payload = (await response.json()) as unknown;
+    const content = extractMessageContent(payload);
+    if (!content) {
+      throw new Error("OpenAI response did not include menu JSON");
+    }
+
+    return content;
   }
 
-  const payload = (await response.json()) as unknown;
-  const content = extractMessageContent(payload);
-  if (!content) {
-    throw new Error("OpenAI response did not include menu JSON");
-  }
-
-  return content;
+  throw lastError ?? new Error("OpenAI request failed");
 }

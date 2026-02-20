@@ -1,5 +1,21 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+function createOkMenuResponse(): Response {
+  return new Response(
+    JSON.stringify({
+      choices: [
+        {
+          message: {
+            content:
+              '{"days":[{"day":"Monday","items":["Rice"],"allergyWarnings":[]}]}',
+          },
+        },
+      ],
+    }),
+    { status: 200 },
+  );
+}
+
 describe("generateOpenAiMenuJson", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -20,21 +36,7 @@ describe("generateOpenAiMenuJson", () => {
 
     const fetchMock = vi.fn<
       (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
-    >(async () => {
-      return new Response(
-        JSON.stringify({
-          choices: [
-            {
-              message: {
-                content:
-                  '{"days":[{"day":"Monday","items":["Rice"],"allergyWarnings":[]}]}',
-              },
-            },
-          ],
-        }),
-        { status: 200 },
-      );
-    });
+    >(async () => createOkMenuResponse());
     vi.stubGlobal("fetch", fetchMock);
 
     const { generateOpenAiMenuJson } = await import("@/lib/llm/openai");
@@ -99,5 +101,57 @@ describe("generateOpenAiMenuJson", () => {
     await expect(generateOpenAiMenuJson("prompt")).rejects.toThrow(
       "OpenAI request failed: 400",
     );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("retries on 429 and succeeds on second attempt", async () => {
+    process.env.OPENAI_API_KEY = "test-key";
+
+    const fetchMock = vi.fn<
+      (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+    >();
+    fetchMock.mockResolvedValueOnce(new Response("rate limited", { status: 429 }));
+    fetchMock.mockResolvedValueOnce(createOkMenuResponse());
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { generateOpenAiMenuJson } = await import("@/lib/llm/openai");
+    const result = await generateOpenAiMenuJson("prompt");
+    expect(result).toContain('"days"');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("retries up to max attempts for 500 errors", async () => {
+    process.env.OPENAI_API_KEY = "test-key";
+
+    const fetchMock = vi.fn<
+      (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+    >();
+    fetchMock.mockResolvedValue(new Response("server error", { status: 500 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { generateOpenAiMenuJson } = await import("@/lib/llm/openai");
+    await expect(generateOpenAiMenuJson("prompt")).rejects.toThrow(
+      "OpenAI request failed: 500",
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("retries after AbortError and then succeeds", async () => {
+    process.env.OPENAI_API_KEY = "test-key";
+
+    const abortError = new Error("aborted");
+    abortError.name = "AbortError";
+
+    const fetchMock = vi.fn<
+      (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+    >();
+    fetchMock.mockRejectedValueOnce(abortError);
+    fetchMock.mockResolvedValueOnce(createOkMenuResponse());
+    vi.stubGlobal("fetch", fetchMock);
+
+    const { generateOpenAiMenuJson } = await import("@/lib/llm/openai");
+    const result = await generateOpenAiMenuJson("prompt");
+    expect(result).toContain('"Monday"');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });
