@@ -3,6 +3,7 @@ const DEFAULT_OPENAI_MODEL = "gpt-5.2";
 const REQUEST_TIMEOUT_MS = 8_000;
 const MAX_ATTEMPTS = 3;
 const RETRY_BACKOFF_MS = [300, 600];
+const OPENAI_REQUEST_FAILED_CODE = "openai_request_failed";
 
 const MENU_PLAN_SCHEMA = {
   type: "object",
@@ -159,6 +160,33 @@ async function fetchWithTimeout(
   }
 }
 
+type OpenAiErrorPhase = "network" | "http" | "response";
+
+type OpenAiRequestErrorInput = {
+  message: string;
+  attempts: number;
+  status: number | null;
+  retryable: boolean;
+  phase: OpenAiErrorPhase;
+};
+
+export class OpenAiRequestError extends Error {
+  readonly code = OPENAI_REQUEST_FAILED_CODE;
+  readonly attempts: number;
+  readonly status: number | null;
+  readonly retryable: boolean;
+  readonly phase: OpenAiErrorPhase;
+
+  constructor(input: OpenAiRequestErrorInput) {
+    super(input.message);
+    this.name = "OpenAiRequestError";
+    this.attempts = input.attempts;
+    this.status = input.status;
+    this.retryable = input.retryable;
+    this.phase = input.phase;
+  }
+}
+
 export async function generateOpenAiMenuJson(prompt: string): Promise<string> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
@@ -166,7 +194,7 @@ export async function generateOpenAiMenuJson(prompt: string): Promise<string> {
   }
 
   const model = process.env.OPENAI_MODEL ?? DEFAULT_OPENAI_MODEL;
-  let lastError: Error | null = null;
+  let lastError: OpenAiRequestError | null = null;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     let response: Response;
@@ -175,32 +203,64 @@ export async function generateOpenAiMenuJson(prompt: string): Promise<string> {
       response = await fetchWithTimeout(apiKey, model, prompt);
     } catch (error) {
       const current = toError(error);
-      if (attempt < MAX_ATTEMPTS && isRetryableError(current)) {
-        lastError = current;
+      const retryable = isRetryableError(current);
+      const wrapped = new OpenAiRequestError({
+        message: current.message,
+        attempts: attempt,
+        status: null,
+        retryable,
+        phase: "network",
+      });
+
+      if (attempt < MAX_ATTEMPTS && retryable) {
+        lastError = wrapped;
         await sleep(backoffDelayMs(attempt));
         continue;
       }
-      throw current;
+      throw wrapped;
     }
 
     if (!response.ok) {
-      const statusError = new Error(`OpenAI request failed: ${response.status}`);
-      if (attempt < MAX_ATTEMPTS && isRetryableStatus(response.status)) {
-        lastError = statusError;
+      const retryable = isRetryableStatus(response.status);
+      const wrapped = new OpenAiRequestError({
+        message: `OpenAI request failed: ${response.status}`,
+        attempts: attempt,
+        status: response.status,
+        retryable,
+        phase: "http",
+      });
+
+      if (attempt < MAX_ATTEMPTS && retryable) {
+        lastError = wrapped;
         await sleep(backoffDelayMs(attempt));
         continue;
       }
-      throw statusError;
+      throw wrapped;
     }
 
     const payload = (await response.json()) as unknown;
     const content = extractMessageContent(payload);
     if (!content) {
-      throw new Error("OpenAI response did not include menu JSON");
+      throw new OpenAiRequestError({
+        message: "OpenAI response did not include menu JSON",
+        attempts: attempt,
+        status: response.status,
+        retryable: false,
+        phase: "response",
+      });
     }
 
     return content;
   }
 
-  throw lastError ?? new Error("OpenAI request failed");
+  throw (
+    lastError ??
+    new OpenAiRequestError({
+      message: "OpenAI request failed",
+      attempts: MAX_ATTEMPTS,
+      status: null,
+      retryable: false,
+      phase: "http",
+    })
+  );
 }

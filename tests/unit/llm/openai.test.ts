@@ -130,9 +130,14 @@ describe("generateOpenAiMenuJson", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const { generateOpenAiMenuJson } = await import("@/lib/llm/openai");
-    await expect(generateOpenAiMenuJson("prompt")).rejects.toThrow(
-      "OpenAI request failed: 500",
-    );
+    const result = await generateOpenAiMenuJson("prompt").catch((error: unknown) => error);
+
+    expect(result).toBeInstanceOf(Error);
+    expect((result as Error).message).toContain("OpenAI request failed: 500");
+    expect((result as Record<string, unknown>).code).toBe("openai_request_failed");
+    expect((result as Record<string, unknown>).attempts).toBe(3);
+    expect((result as Record<string, unknown>).status).toBe(500);
+    expect((result as Record<string, unknown>).retryable).toBe(true);
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
