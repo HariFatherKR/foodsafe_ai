@@ -25,7 +25,7 @@ describe("/parent page", () => {
 
     render(<ParentPage />);
 
-    expect(screen.getByRole("heading", { name: "학부모 알림" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "오늘 급식 안전 브리핑" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "오늘 급식 안전 상태" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "최근 위험 공지" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "이번 주 메뉴 미리보기" })).toBeInTheDocument();

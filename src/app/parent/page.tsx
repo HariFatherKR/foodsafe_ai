@@ -92,15 +92,18 @@ export default function ParentPage() {
     <main className="page-shell">
       <div className="page-container">
         <HeaderRoleSwitch />
+        <section className="brutal-marquee fade-up" aria-label="학부모 피드 배너">
+          학부모 피드 // 오늘 안전 상태 // 위험 공지 확인 // 메뉴 미리보기 // 실시간 동기화 //
+        </section>
         <TrustEvidenceBar syncedAt={syncedAt} fromCache={Boolean(errorMessage)} />
 
-        <section className="hero-card fade-up">
+        <section className="hero-card hero-card--parent fade-up">
           <div className="hero-card__content">
             <span className="hero-card__eyebrow">학부모 확인 피드</span>
-            <h1>학부모 알림</h1>
+            <h1>오늘 급식 안전 브리핑</h1>
             <p>
-              오늘의 안전 상태와 급식 공지를 핵심 순서로 보여주어 빠르게 확인할 수 있도록
-              구성했습니다.
+              오늘 위험 신호와 메뉴 변경 정보를 한 화면에 묶어 빠르게 확인하고 대응할 수
+              있도록 구성했습니다.
             </p>
             <SyncStatusChip syncedAt={syncedAt} fromCache={Boolean(errorMessage)} />
           </div>
@@ -113,6 +116,21 @@ export default function ParentPage() {
               onError={() => setHeroImage(HERO_IMAGE_FALLBACK)}
             />
           </div>
+        </section>
+
+        <section className="ops-metrics fade-up" aria-label="학부모 핵심 확인 지표">
+          <article className="ops-metrics__item">
+            <span>위험</span>
+            <strong>{notices.length > 0 ? "주의" : "안정"}</strong>
+          </article>
+          <article className="ops-metrics__item">
+            <span>메뉴</span>
+            <strong>{menuPlan ? "준비" : "대기"}</strong>
+          </article>
+          <article className="ops-metrics__item">
+            <span>동기화</span>
+            <strong>{syncedAt ? "실시간" : "없음"}</strong>
+          </article>
         </section>
 
         {isLoading ? (
