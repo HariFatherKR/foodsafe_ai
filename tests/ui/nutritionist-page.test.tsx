@@ -24,6 +24,10 @@ describe("/nutritionist page", () => {
     expect(
       screen.getByRole("button", { name: "학부모 공지 발행" }),
     ).toBeInTheDocument();
+    expect(screen.getByText("데이터 출처: 식약처 공개데이터")).toBeInTheDocument();
+    expect(screen.getByText("식자재명")).toBeInTheDocument();
+    expect(screen.getByText("급식 인원")).toBeInTheDocument();
+    expect(screen.getByText("총 예산")).toBeInTheDocument();
   });
 
   it("enables publish button after menu is generated", async () => {
@@ -83,6 +87,76 @@ describe("/nutritionist page", () => {
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/menu/generate",
       expect.objectContaining({ method: "POST" }),
+    );
+  });
+
+  it("shows loading state while menu generation is in progress", async () => {
+    const user = userEvent.setup();
+
+    let resolveMenuRequest:
+      | ((value: Response | PromiseLike<Response>) => void)
+      | undefined;
+
+    vi.spyOn(global, "fetch").mockImplementation((input) => {
+      const url = typeof input === "string" ? input : input.toString();
+
+      if (url === "/api/mfds/datasets") {
+        return Promise.resolve(
+          new Response(JSON.stringify({ datasets: [] }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+
+      if (url === "/api/menu/generate") {
+        return new Promise<Response>((resolve) => {
+          resolveMenuRequest = resolve;
+        });
+      }
+
+      return Promise.resolve(
+        new Response(JSON.stringify({}), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      );
+    });
+
+    render(<NutritionistPage />);
+
+    await user.click(screen.getByRole("button", { name: "메뉴 생성" }));
+
+    expect(screen.getByRole("button", { name: "메뉴 생성 중..." })).toBeDisabled();
+
+    if (!resolveMenuRequest) {
+      throw new Error("menu request resolver was not captured");
+    }
+
+    resolveMenuRequest(
+      new Response(
+        JSON.stringify({
+          menuPlan: {
+            id: "menu-loading-test",
+            days: [
+              {
+                day: "Monday",
+                items: ["Rice", "Soup"],
+                allergyWarnings: [],
+              },
+            ],
+          },
+          fallbackUsed: false,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      ),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "메뉴 생성" })).toBeInTheDocument(),
     );
   });
 });

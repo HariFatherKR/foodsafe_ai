@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ErrorFallbackToast } from "@/components/common/ErrorFallbackToast";
 import { HeaderRoleSwitch } from "@/components/common/HeaderRoleSwitch";
 import { SyncStatusChip } from "@/components/common/SyncStatusChip";
+import { TrustEvidenceBar } from "@/components/common/TrustEvidenceBar";
 import { AllergyInfoCard } from "@/components/parent/AllergyInfoCard";
 import { MenuPreviewCard } from "@/components/parent/MenuPreviewCard";
 import { RiskNoticeList } from "@/components/parent/RiskNoticeList";
@@ -91,6 +92,7 @@ export default function ParentPage() {
     <main className="page-shell">
       <div className="page-container">
         <HeaderRoleSwitch />
+        <TrustEvidenceBar syncedAt={syncedAt} fromCache={Boolean(errorMessage)} />
 
         <section className="hero-card fade-up">
           <div className="hero-card__content">
@@ -143,6 +145,7 @@ export default function ParentPage() {
         <ErrorFallbackToast
           message={errorMessage || "오류가 발생해 기본 피드를 표시합니다."}
           visible={Boolean(errorMessage)}
+          mode="alert"
         />
       </div>
     </main>

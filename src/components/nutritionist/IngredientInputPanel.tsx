@@ -18,7 +18,11 @@ export function IngredientInputPanel({
       <h2>식자재 등록</h2>
       <p>학교에서 사용할 식자재를 먼저 등록하면 다음 단계에서 위해 정보를 빠르게 대조합니다.</p>
       <form onSubmit={onSubmit} className="input-row">
+        <label className="field-group" htmlFor="ingredient-input">
+          <span className="field-label">식자재명</span>
+        </label>
         <input
+          id="ingredient-input"
           className="input"
           value={value}
           onChange={(event) => onValueChange(event.target.value)}

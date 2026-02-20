@@ -4,7 +4,7 @@ type TodaySafetyBannerProps = {
 
 export function TodaySafetyBanner({ hasRiskNotice }: TodaySafetyBannerProps) {
   return (
-    <section className="story-panel story-panel--soft fade-up">
+    <section className="story-panel story-panel--soft fade-up" role="status" aria-live="polite">
       <h2>오늘 급식 안전 상태</h2>
       <p>
         {hasRiskNotice

@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { HeaderRoleSwitch } from "@/components/common/HeaderRoleSwitch";
 import { ErrorFallbackToast } from "@/components/common/ErrorFallbackToast";
 import { SyncStatusChip } from "@/components/common/SyncStatusChip";
+import { TrustEvidenceBar } from "@/components/common/TrustEvidenceBar";
 import { IngredientInputPanel } from "@/components/nutritionist/IngredientInputPanel";
 import { MenuGeneratorPanel } from "@/components/nutritionist/MenuGeneratorPanel";
 import { PublishNoticeButton } from "@/components/nutritionist/PublishNoticeButton";
@@ -61,6 +62,9 @@ export default function NutritionistPage() {
   const [noticeResult, setNoticeResult] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [datasets, setDatasets] = useState<Dataset[]>([]);
+  const [isRiskChecking, setIsRiskChecking] = useState(false);
+  const [isMenuGenerating, setIsMenuGenerating] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const canRunRiskCheck = useMemo(() => ingredients.length > 0, [ingredients]);
   const canPublish = useMemo(
@@ -109,6 +113,11 @@ export default function NutritionistPage() {
   }
 
   async function runRiskCheck() {
+    if (isRiskChecking) {
+      return;
+    }
+
+    setIsRiskChecking(true);
     setErrorMessage("");
 
     try {
@@ -133,10 +142,17 @@ export default function NutritionistPage() {
       setSyncedAt(data.syncedAt);
     } catch {
       setErrorMessage("위해도 검사 중 오류가 발생했습니다.");
+    } finally {
+      setIsRiskChecking(false);
     }
   }
 
   async function runMenuGenerate() {
+    if (isMenuGenerating) {
+      return;
+    }
+
+    setIsMenuGenerating(true);
     setErrorMessage("");
 
     try {
@@ -168,10 +184,17 @@ export default function NutritionistPage() {
       setFallbackUsed(data.fallbackUsed);
     } catch {
       setErrorMessage("메뉴 생성 중 오류가 발생했습니다.");
+    } finally {
+      setIsMenuGenerating(false);
     }
   }
 
   async function publishNotice() {
+    if (isPublishing) {
+      return;
+    }
+
+    setIsPublishing(true);
     setErrorMessage("");
     setNoticeResult("");
 
@@ -203,6 +226,8 @@ export default function NutritionistPage() {
       setNoticeResult("학부모 공지가 발행되었습니다.");
     } catch {
       setErrorMessage("공지 발행 중 오류가 발생했습니다.");
+    } finally {
+      setIsPublishing(false);
     }
   }
 
@@ -210,6 +235,7 @@ export default function NutritionistPage() {
     <main className="page-shell">
       <div className="page-container">
         <HeaderRoleSwitch />
+        <TrustEvidenceBar syncedAt={syncedAt} fromCache={Boolean(errorMessage)} />
 
         <section className="hero-card fade-up">
           <div className="hero-card__content">
@@ -286,7 +312,11 @@ export default function NutritionistPage() {
             onValueChange={setIngredientInput}
             onSubmit={addIngredient}
           />
-          <RiskCheckPanel onRun={runRiskCheck} disabled={!canRunRiskCheck} />
+          <RiskCheckPanel
+            onRun={runRiskCheck}
+            disabled={!canRunRiskCheck}
+            loading={isRiskChecking}
+          />
           <RiskDetailCard riskEvents={riskEvents} />
           <MenuGeneratorPanel
             people={people}
@@ -296,6 +326,7 @@ export default function NutritionistPage() {
             onBudgetChange={setBudget}
             onAllergiesChange={setAllergies}
             onGenerate={runMenuGenerate}
+            loading={isMenuGenerating}
           />
           <WeeklyMenuView menuPlan={menuPlan} fallbackUsed={fallbackUsed} />
           <section className="story-panel fade-up">
@@ -303,7 +334,11 @@ export default function NutritionistPage() {
             <p>
               위험 대응 및 메뉴 조정 결과를 학부모에게 즉시 공유해 신뢰를 확보합니다.
             </p>
-            <PublishNoticeButton onClick={publishNotice} disabled={!canPublish} />
+            <PublishNoticeButton
+              onClick={publishNotice}
+              disabled={!canPublish || isPublishing}
+              loading={isPublishing}
+            />
             {noticeResult ? <p>{noticeResult}</p> : null}
           </section>
         </div>
@@ -311,6 +346,7 @@ export default function NutritionistPage() {
         <ErrorFallbackToast
           message={errorMessage || "외부 API 응답 오류로 캐시 데이터를 표시했습니다."}
           visible={Boolean(errorMessage)}
+          mode="alert"
         />
       </div>
     </main>

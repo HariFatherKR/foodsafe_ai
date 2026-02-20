@@ -9,7 +9,11 @@ export function SyncStatusChip({ syncedAt, fromCache }: SyncStatusChipProps) {
     : "동기화 정보 없음";
 
   return (
-    <span className={`pill-chip${fromCache ? " pill-chip--warning" : ""}`}>
+    <span
+      className={`pill-chip${fromCache ? " pill-chip--warning" : ""}`}
+      role="status"
+      aria-live="polite"
+    >
       {label}
     </span>
   );

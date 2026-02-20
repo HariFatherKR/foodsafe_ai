@@ -31,6 +31,7 @@ describe("/parent page", () => {
     expect(screen.getByRole("heading", { name: "이번 주 메뉴 미리보기" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "알레르기 주의 정보" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "학부모 확인 플로우" })).toBeInTheDocument();
+    expect(screen.getByText("데이터 출처: 식약처 공개데이터")).toBeInTheDocument();
     expect(screen.queryByText("TodaySafetyBanner")).not.toBeInTheDocument();
     expect(screen.queryByText("RiskNoticeList")).not.toBeInTheDocument();
     expect(screen.queryByText("AllergyInfoCard")).not.toBeInTheDocument();
