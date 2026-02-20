@@ -1,3 +1,5 @@
+import { generateOpenAiMenuJson } from "@/lib/llm/openai";
+
 export type MenuConstraints = {
   people: number;
   budget: number;
@@ -22,13 +24,7 @@ export function buildMenuPrompt(constraints: MenuConstraints): string {
 }
 
 export async function generateMenuFromAi(prompt: string): Promise<string> {
-  void prompt;
-  const mocked = process.env.FOODSAFE_LLM_RESPONSE;
-  if (!mocked) {
-    throw new Error("LLM response is unavailable");
-  }
-
-  return mocked;
+  return generateOpenAiMenuJson(prompt);
 }
 
 function isStringArray(value: unknown): value is string[] {

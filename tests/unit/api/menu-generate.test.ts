@@ -1,7 +1,15 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const generateOpenAiMenuJsonMock = vi.fn<
+  (prompt: string) => Promise<string>
+>();
+
+vi.mock("@/lib/llm/openai", () => ({
+  generateOpenAiMenuJson: generateOpenAiMenuJsonMock,
+}));
 
 describe("/api/menu/generate POST", () => {
   let tempDir = "";
@@ -9,16 +17,17 @@ describe("/api/menu/generate POST", () => {
   beforeEach(async () => {
     tempDir = await mkdtemp(path.join(os.tmpdir(), "foodsafe-menu-"));
     process.env.FOODSAFE_STORE_PATH = path.join(tempDir, "store.json");
+    generateOpenAiMenuJsonMock.mockReset();
   });
 
   afterEach(async () => {
     delete process.env.FOODSAFE_STORE_PATH;
-    delete process.env.FOODSAFE_LLM_RESPONSE;
     await rm(tempDir, { recursive: true, force: true });
   });
 
   it("returns fallback when ai output is invalid json", async () => {
-    process.env.FOODSAFE_LLM_RESPONSE = "not-json";
+    generateOpenAiMenuJsonMock.mockResolvedValue("not-json");
+
     const { POST } = await import("@/app/api/menu/generate/route");
     const response = await POST(
       new Request("http://localhost/api/menu/generate", {
@@ -43,15 +52,17 @@ describe("/api/menu/generate POST", () => {
   });
 
   it("uses ai output when valid json is returned", async () => {
-    process.env.FOODSAFE_LLM_RESPONSE = JSON.stringify({
-      days: [
-        {
-          day: "Monday",
-          items: ["Rice", "Soup"],
-          allergyWarnings: ["milk"],
-        },
-      ],
-    });
+    generateOpenAiMenuJsonMock.mockResolvedValue(
+      JSON.stringify({
+        days: [
+          {
+            day: "Monday",
+            items: ["Rice", "Soup"],
+            allergyWarnings: ["milk"],
+          },
+        ],
+      }),
+    );
 
     const { POST } = await import("@/app/api/menu/generate/route");
     const response = await POST(
