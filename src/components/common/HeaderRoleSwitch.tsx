@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { signOutAction } from "@/app/auth/login/actions";
 
 export function HeaderRoleSwitch() {
   return (
@@ -13,6 +14,11 @@ export function HeaderRoleSwitch() {
         <Link className="role-switch__link" href="/parent">
           학부모 화면
         </Link>
+        <form action={signOutAction}>
+          <button className="role-switch__link" type="submit">
+            로그아웃
+          </button>
+        </form>
       </div>
     </nav>
   );

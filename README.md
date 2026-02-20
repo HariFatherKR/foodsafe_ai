@@ -6,6 +6,35 @@
 
 - `/nutritionist`: 영양사 운영 화면 (리스크 검사, 메뉴 생성, 공지 발행)
 - `/parent`: 학부모 조회 화면 (안전 배너, 공지, 메뉴 확인)
+- `/auth/login`: Google OAuth 로그인 화면
+
+## Supabase Google OAuth 설정
+
+1. Supabase 프로젝트 생성 후 Auth > Providers에서 Google OAuth를 활성화합니다.
+2. Google Cloud Console에서 OAuth Client를 만들고, Redirect URI를 다음으로 설정합니다.
+
+```text
+https://<project-ref>.supabase.co/auth/v1/callback
+```
+
+3. Supabase Auth URL 설정
+
+- Site URL
+  - `https://<your-vercel-domain>`
+- Redirect URLs
+  - `https://<your-vercel-domain>/auth/callback`
+  - `http://localhost:3000/auth/callback`
+
+4. Vercel / 로컬 환경변수
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-or-publishable-key>
+NEXT_PUBLIC_SITE_URL=https://<your-vercel-domain>
+```
+
+- 로컬 개발 시 `NEXT_PUBLIC_SITE_URL=http://localhost:3000` 권장
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` 대신 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`도 허용
 
 ## 로컬 실행
 
@@ -47,3 +76,5 @@ pnpm seed:demo
 - 통합 문서: `docs/plans/2026-02-16-foodsafeai-mvp-unified-plan.md`
 - 구현 플랜: `docs/plans/2026-02-16-foodsafeai-mvp-implementation.md`
 - 데모 런북: `docs/runbooks/foodsafeai-demo-runbook.md`
+- OAuth 설계: `docs/plans/2026-02-20-supabase-google-oauth-design.md`
+- OAuth 구현 계획: `docs/plans/2026-02-20-supabase-google-oauth-implementation.md`
