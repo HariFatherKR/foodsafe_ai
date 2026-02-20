@@ -12,9 +12,17 @@
 
 ```bash
 pnpm install
+export OPENAI_API_KEY=your_openai_api_key
+export OPENAI_MODEL=gpt-5.2
 pnpm seed:demo
 pnpm dev
 ```
+
+## LLM 환경변수
+
+- `OPENAI_API_KEY` (필수): OpenAI API 키
+- `OPENAI_MODEL` (선택): 기본값 `gpt-5.2`
+- OpenAI 호출 실패 또는 응답 파싱 실패 시 메뉴는 자동으로 fallback으로 전환됩니다.
 
 ## 주요 스크립트
 

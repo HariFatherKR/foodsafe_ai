@@ -34,9 +34,7 @@ describe("parent feed api", () => {
 
     expect(publishResponse.status).toBe(200);
 
-    const feedResponse = await feedRoute.GET(
-      new Request("http://localhost/api/parent/feed"),
-    );
+    const feedResponse = await feedRoute.GET();
     expect(feedResponse.status).toBe(200);
 
     const data = await feedResponse.json();

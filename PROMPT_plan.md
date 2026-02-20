@@ -19,3 +19,4 @@ ULTIMATE GOAL:
   - get allergy/restriction safety warnings,
   - receive explainable meal recommendations,
   - ship only through required CI and branch protection checks.
+- Keep menu-generation safety paths production-ready (structured OpenAI JSON output, fallback reliability, and passing quality gates).

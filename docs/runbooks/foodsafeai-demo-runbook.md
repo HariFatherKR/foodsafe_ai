@@ -4,6 +4,8 @@
 
 ```bash
 pnpm install
+export OPENAI_API_KEY=your_openai_api_key
+export OPENAI_MODEL=gpt-5.2
 pnpm seed:demo
 pnpm dev
 ```
@@ -29,7 +31,7 @@ pnpm dev
 ## 4) 장애 대응 포인트
 
 - MFDS 연동 실패 시: 캐시/로컬 데이터 기반 시연 지속
-- LLM 파싱 실패 시: fallback 메뉴 사용
+- `OPENAI_API_KEY` 누락/쿼터 초과/LLM 파싱 실패 시: fallback 메뉴 사용
 - 동기화 정보: `SyncStatusChip`로 표시
 
 ## 5) 품질 검증
