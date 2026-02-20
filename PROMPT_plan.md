@@ -12,4 +12,11 @@ IMPORTANT:
 - Prefer shared implementations in `src/lib/*` over ad-hoc duplicates.
 
 ULTIMATE GOAL:
-- Keep FoodSafeAI menu generation production-ready: OpenAI-based structured JSON output, safe fallback behavior, and passing quality gates (tests/typecheck/lint/build).
+- Deliver a personal nutrition management PWA on Vercel + Supabase where users can:
+  - sign in with Google OAuth/email,
+  - log meals with barcode + manual input,
+  - see daily nutrition score against goals,
+  - get allergy/restriction safety warnings,
+  - receive explainable meal recommendations,
+  - ship only through required CI and branch protection checks.
+- Keep menu-generation safety paths production-ready (structured OpenAI JSON output, fallback reliability, and passing quality gates).

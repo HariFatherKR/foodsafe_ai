@@ -1,0 +1,70 @@
+name: CI Supabase
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  supabase-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect Supabase related changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            supabase_changed:
+              - "supabase/**"
+              - "src/lib/supabase/**"
+              - "src/app/api/**"
+              - ".github/workflows/ci-supabase.yml"
+
+      - name: Skip message for non-supabase changes
+        if: steps.changes.outputs.supabase_changed != 'true'
+        run: echo "No Supabase-related changes detected; check passes by policy."
+
+      - name: Setup pnpm
+        if: steps.changes.outputs.supabase_changed == 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        if: steps.changes.outputs.supabase_changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        if: steps.changes.outputs.supabase_changed == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Supabase CLI
+        if: steps.changes.outputs.supabase_changed == 'true'
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Verify Supabase project configuration exists
+        if: steps.changes.outputs.supabase_changed == 'true'
+        run: |
+          if [ ! -f supabase/config.toml ]; then
+            echo "Missing supabase/config.toml. Initialize Supabase project first."
+            exit 1
+          fi
+
+      - name: Lint schema and policies
+        if: steps.changes.outputs.supabase_changed == 'true'
+        run: supabase db lint
+
+      - name: Run regression tests
+        if: steps.changes.outputs.supabase_changed == 'true'
+        run: pnpm test --run

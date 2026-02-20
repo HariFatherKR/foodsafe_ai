@@ -1,35 +1,37 @@
 ## Build & Run
 
-Succinct rules for how to build and run this project.
-
-- Install: `pnpm install`
-- Dev server: `pnpm dev`
-- Demo seed: `pnpm seed:demo`
-- Local URL: `http://localhost:3000`
+- Install dependencies: `pnpm install`
+- Run local app: `pnpm dev`
+- Seed local demo data: `pnpm seed:demo`
+- Open app: `http://localhost:3000`
 
 ## Validation
 
 Run these after implementing to apply backpressure:
 
-- Tests: `pnpm test -- --run`
+- Tests: `pnpm test --run`
 - Typecheck: `pnpm exec tsc --noEmit`
 - Lint: `pnpm lint`
 - Build: `pnpm build`
 
 ## Operational Notes
 
-Keep this section short and operational:
-
-- Required environment variables:
-- `OPENAI_API_KEY` is required for real menu generation.
-- `OPENAI_MODEL` is optional; default is `gpt-5.2`.
-- No external DB required; store defaults to `data/store.json`.
-- Override local store with `FOODSAFE_STORE_PATH`.
+- Supabase auth integration requires:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`)
+  - `NEXT_PUBLIC_SITE_URL`
+- OpenAI menu generation requires:
+  - `OPENAI_API_KEY`
+  - `OPENAI_MODEL` (optional, default: `gpt-5.2`)
+- No external DB is required for menu fallback path; local store defaults to `data/store.json`.
+- Override local store path with `FOODSAFE_STORE_PATH`.
+- `ci-supabase` workflow expects `supabase/config.toml` in repository.
+- In git worktree environments, Next.js may show multiple-lockfile root warning. This is expected if both root and worktree lockfiles exist.
 
 ### Codebase Patterns
 
-Short notes on shared patterns/utilities that should be reused.
-
-- Keep API routes in `src/app/api/**/route.ts`.
-- Reuse shared logic in `src/lib/**` instead of route-local duplication.
-- Maintain fallback behavior for user-facing flows (`fallbackUsed` contract).
+- API routes: `src/app/api/**/route.ts`
+- Domain logic/utilities: `src/lib/**`
+- UI pages/components: `src/app/**`, `src/components/**`
+- Tests: `tests/unit/**`, `tests/ui/**`
+- Preserve fallback behavior contracts for user-facing flows (`fallbackUsed`).

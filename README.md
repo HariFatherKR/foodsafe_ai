@@ -6,6 +6,7 @@
 
 - `/nutritionist`: 영양사 운영 화면 (리스크 검사, 메뉴 생성, 공지 발행)
 - `/parent`: 학부모 조회 화면 (안전 배너, 공지, 메뉴 확인)
+- `/docs`: Ralph Loop + CI + Vercel/Supabase 운영 문서 화면
 
 ## 로컬 실행
 
@@ -55,3 +56,4 @@ pnpm seed:demo
 - 통합 문서: `docs/plans/2026-02-16-foodsafeai-mvp-unified-plan.md`
 - 구현 플랜: `docs/plans/2026-02-16-foodsafeai-mvp-implementation.md`
 - 데모 런북: `docs/runbooks/foodsafeai-demo-runbook.md`
+- 운영 런북: `docs/runbooks/ralph-loop-ci-vercel-supabase.md`
