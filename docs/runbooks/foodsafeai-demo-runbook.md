@@ -24,7 +24,18 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-or-publishable-key>
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-## 1) 준비
+## 1) Admin 권한 모델 준비 (최초 1회)
+
+1. Supabase SQL Editor에서 `docs/sql/2026-02-20-admin-role-management.sql` 실행
+2. 초기 admin 이메일을 수동 지정
+
+```sql
+update public.profiles
+set role = 'admin'
+where email = 'your-admin-email@example.com';
+```
+
+## 2) 실행 준비
 
 ```bash
 pnpm install
@@ -34,38 +45,48 @@ pnpm dev
 
 - 앱 주소: `http://localhost:3000`
 - 로그인 화면: `http://localhost:3000/auth/login`
+- 관리자 화면: `http://localhost:3000/admin`
 - 영양사 화면: `http://localhost:3000/nutritionist`
 - 학부모 화면: `http://localhost:3000/parent`
 
-## 2) 로그인 시연
+## 3) 로그인/권한 시연
 
 1. 보호된 경로 접근 시 `/auth/login`으로 이동되는지 확인
 2. `Google로 로그인` 버튼 클릭
 3. 로그인 후 원래 페이지(`next`)로 복귀되는지 확인
-4. 상단 `로그아웃` 버튼 클릭 시 `/auth/login`으로 돌아오는지 확인
+4. 상단 헤더에서 `내 등급` 배지 확인
+5. `user` 계정으로 `/admin` 접근 시 `/`로 리다이렉트되는지 확인
 
-## 3) 리스크 E2E 시연
+## 4) Admin 권한 관리 시연
+
+1. `admin` 계정으로 `/admin` 접근
+2. 사용자 목록에서 `user -> admin` 변경 실행
+3. 자기 계정 `admin -> user` 버튼 비활성 확인
+4. 최근 권한 변경 이력 카드 반영 확인
+
+## 5) 리스크 E2E 시연
 
 1. 영양사 화면에서 식자재 등록 시나리오를 설명한다.
 2. `POST /api/risk/check` 호출 흐름(식약처 정규화 + 매칭)을 설명한다.
 3. 위험 이벤트 생성 후 학부모 공지 발행 시나리오를 설명한다.
 4. 학부모 화면에서 공지 반영을 확인한다.
 
-## 4) 메뉴 E2E 시연
+## 6) 메뉴 E2E 시연
 
 1. 영양사 화면에서 인원/예산/알레르기 조건 기반 메뉴 생성 흐름을 설명한다.
 2. AI 응답이 정상 JSON이면 생성 메뉴 사용.
 3. AI 응답 실패 시 fallback 메뉴로 자동 전환됨을 설명한다.
 4. 학부모 화면 메뉴 카드 반영을 확인한다.
 
-## 5) 장애 대응 포인트
+## 7) 장애 대응 포인트
 
 - OAuth 실패 시: 로그인 화면에서 오류 문구 표시 후 재시도
+- 권한 변경 실패 시: `/admin` 에러 배지 확인 후 재시도
 - MFDS 연동 실패 시: 캐시/로컬 데이터 기반 시연 지속
 - LLM 파싱 실패 시: fallback 메뉴 사용
 - 동기화 정보: `SyncStatusChip`로 표시
 
-## 6) 품질 검증
+## 8) 품질 검증
 
 ```bash
 pnpm test

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildLoginRedirect,
+  isAdminPath,
   isPublicPath,
   normalizeNextPath,
 } from "@/lib/auth/guard";
@@ -31,5 +32,11 @@ describe("auth guard", () => {
     expect(normalizeNextPath("https://evil.com/phish")).toBe("/");
     expect(normalizeNextPath("//evil.com")).toBe("/");
     expect(normalizeNextPath("javascript:alert(1)")).toBe("/");
+  });
+
+  it("detects admin-only route prefix", () => {
+    expect(isAdminPath("/admin")).toBe(true);
+    expect(isAdminPath("/admin/users")).toBe(true);
+    expect(isAdminPath("/parent")).toBe(false);
   });
 });

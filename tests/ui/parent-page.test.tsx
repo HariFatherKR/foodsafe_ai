@@ -9,19 +9,41 @@ describe("/parent page", () => {
   });
 
   it("renders parent feed sections", () => {
-    vi.spyOn(global, "fetch").mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          notices: [],
-          latestMenuPlan: null,
-          syncedAt: null,
-        }),
-        {
+    vi.spyOn(global, "fetch").mockImplementation((input) => {
+      const url = typeof input === "string" ? input : input.toString();
+
+      if (url === "/api/auth/profile") {
+        return Promise.resolve(
+          new Response(JSON.stringify({ profile: null }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+
+      if (url === "/api/parent/feed") {
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              notices: [],
+              latestMenuPlan: null,
+              syncedAt: null,
+            }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            },
+          ),
+        );
+      }
+
+      return Promise.resolve(
+        new Response(JSON.stringify({}), {
           status: 200,
           headers: { "Content-Type": "application/json" },
-        },
-      ),
-    );
+        }),
+      );
+    });
 
     render(<ParentPage />);
 
@@ -38,29 +60,51 @@ describe("/parent page", () => {
   });
 
   it("shows loading then renders feed data", async () => {
-    vi.spyOn(global, "fetch").mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          notices: [
+    vi.spyOn(global, "fetch").mockImplementation((input) => {
+      const url = typeof input === "string" ? input : input.toString();
+
+      if (url === "/api/auth/profile") {
+        return Promise.resolve(
+          new Response(JSON.stringify({ profile: { role: "user", email: "p@example.com" } }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+
+      if (url === "/api/parent/feed") {
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              notices: [
+                {
+                  id: "notice-1",
+                  title: "Safety update",
+                  body: "Milk risk found",
+                  createdAt: "2026-02-16T09:00:00.000Z",
+                },
+              ],
+              latestMenuPlan: {
+                id: "menu-1",
+                days: [{ day: "Monday", items: ["Rice", "Soup"] }],
+              },
+              syncedAt: "2026-02-16T09:00:00.000Z",
+            }),
             {
-              id: "notice-1",
-              title: "Safety update",
-              body: "Milk risk found",
-              createdAt: "2026-02-16T09:00:00.000Z",
+              status: 200,
+              headers: { "Content-Type": "application/json" },
             },
-          ],
-          latestMenuPlan: {
-            id: "menu-1",
-            days: [{ day: "Monday", items: ["Rice", "Soup"] }],
-          },
-          syncedAt: "2026-02-16T09:00:00.000Z",
-        }),
-        {
+          ),
+        );
+      }
+
+      return Promise.resolve(
+        new Response(JSON.stringify({}), {
           status: 200,
           headers: { "Content-Type": "application/json" },
-        },
-      ),
-    );
+        }),
+      );
+    });
 
     render(<ParentPage />);
 

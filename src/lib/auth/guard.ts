@@ -17,6 +17,10 @@ export function isPublicPath(pathname: string): boolean {
   return isStaticAssetPath(pathname);
 }
 
+export function isAdminPath(pathname: string): boolean {
+  return pathname === "/admin" || pathname.startsWith("/admin/");
+}
+
 export function normalizeNextPath(value: string | null | undefined): string {
   if (!value) {
     return "/";
