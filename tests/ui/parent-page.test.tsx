@@ -47,12 +47,13 @@ describe("/parent page", () => {
 
     render(<ParentPage />);
 
-    expect(screen.getByRole("heading", { name: "학부모 알림" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "TODAY SAFETY BRIEFING" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "오늘 급식 안전 상태" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "최근 위험 공지" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "이번 주 메뉴 미리보기" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "알레르기 주의 정보" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "학부모 확인 플로우" })).toBeInTheDocument();
+    expect(screen.getByText("데이터 출처: 식약처 공개데이터")).toBeInTheDocument();
     expect(screen.queryByText("TodaySafetyBanner")).not.toBeInTheDocument();
     expect(screen.queryByText("RiskNoticeList")).not.toBeInTheDocument();
     expect(screen.queryByText("AllergyInfoCard")).not.toBeInTheDocument();

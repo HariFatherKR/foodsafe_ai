@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ErrorFallbackToast } from "@/components/common/ErrorFallbackToast";
 import { HeaderRoleSwitch } from "@/components/common/HeaderRoleSwitch";
 import { SyncStatusChip } from "@/components/common/SyncStatusChip";
+import { TrustEvidenceBar } from "@/components/common/TrustEvidenceBar";
 import { AllergyInfoCard } from "@/components/parent/AllergyInfoCard";
 import { MenuPreviewCard } from "@/components/parent/MenuPreviewCard";
 import { RiskNoticeList } from "@/components/parent/RiskNoticeList";
@@ -91,16 +92,24 @@ export default function ParentPage() {
     <main className="page-shell">
       <div className="page-container">
         <HeaderRoleSwitch />
+        <section className="brutal-marquee fade-up" aria-label="학부모 피드 배너">
+          PARENT FEED // TODAY SAFETY STATUS // NOTICE WATCH // MENU PREVIEW // LIVE SYNC //
+        </section>
+        <TrustEvidenceBar syncedAt={syncedAt} fromCache={Boolean(errorMessage)} />
 
-        <section className="hero-card fade-up">
+        <section className="hero-card hero-card--parent fade-up">
           <div className="hero-card__content">
-            <span className="hero-card__eyebrow">학부모 확인 피드</span>
-            <h1>학부모 알림</h1>
+            <span className="hero-card__eyebrow">Parent Review Feed</span>
+            <h1>TODAY SAFETY BRIEFING</h1>
             <p>
-              오늘의 안전 상태와 급식 공지를 핵심 순서로 보여주어 빠르게 확인할 수 있도록
-              구성했습니다.
+              Today risk signals and menu updates are collected in one view for faster
+              parent response.
             </p>
-            <SyncStatusChip syncedAt={syncedAt} fromCache={Boolean(errorMessage)} />
+            <SyncStatusChip
+              syncedAt={syncedAt}
+              fromCache={Boolean(errorMessage)}
+              language="en"
+            />
           </div>
           <div className="hero-card__media">
             <Image
@@ -111,6 +120,21 @@ export default function ParentPage() {
               onError={() => setHeroImage(HERO_IMAGE_FALLBACK)}
             />
           </div>
+        </section>
+
+        <section className="ops-metrics fade-up" aria-label="학부모 핵심 확인 지표">
+          <article className="ops-metrics__item">
+            <span>RISK</span>
+            <strong>{notices.length > 0 ? "ALERT" : "CLEAR"}</strong>
+          </article>
+          <article className="ops-metrics__item">
+            <span>MENU</span>
+            <strong>{menuPlan ? "READY" : "WAIT"}</strong>
+          </article>
+          <article className="ops-metrics__item">
+            <span>SYNC</span>
+            <strong>{syncedAt ? "LIVE" : "N/A"}</strong>
+          </article>
         </section>
 
         {isLoading ? (
@@ -143,6 +167,7 @@ export default function ParentPage() {
         <ErrorFallbackToast
           message={errorMessage || "오류가 발생해 기본 피드를 표시합니다."}
           visible={Boolean(errorMessage)}
+          mode="alert"
         />
       </div>
     </main>

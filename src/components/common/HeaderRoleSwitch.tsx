@@ -40,7 +40,7 @@ export function HeaderRoleSwitch() {
   return (
     <nav className="role-switch">
       <Link className="role-switch__brand" href="/">
-        푸드세이프AI 케어
+        FoodSafeAI Command Center
       </Link>
       <div className="role-switch__links">
         <Link className="role-switch__link" href="/nutritionist">

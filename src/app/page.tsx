@@ -15,11 +15,16 @@ type Dataset = {
 };
 
 const HERO_IMAGE =
-  "https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1400&q=80";
-const STORY_IMAGE_ONE =
-  "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80";
-const STORY_IMAGE_TWO =
-  "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=1200&q=80";
+  "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1600&q=80";
+const TERMINAL_IMAGE =
+  "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1600&q=80";
+const OPERATION_STEPS = [
+  "INGREDIENT INTAKE",
+  "RISK CHECK",
+  "MENU GENERATION",
+  "NOTICE PUBLISH",
+  "PARENT FEED",
+];
 
 export default function Home() {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
@@ -63,119 +68,101 @@ export default function Home() {
       <div className="page-container">
         <HeaderRoleSwitch />
 
-        <section className="hero-card fade-up">
-          <div className="hero-card__content">
-            <span className="hero-card__eyebrow">급식 안전 운영 스토리</span>
-            <h1>급식 안전을 운영과 소통까지 한 화면에서 관리합니다.</h1>
-            <p>
-              식약처 공개 데이터 기반으로 영양사의 대응 단계를 정리하고, 학부모에게
-              결과를 이해하기 쉽게 전달하는 클린 헬스케어 경험을 제공합니다.
+        <section className="brutal-marquee fade-up" aria-label="실시간 운영 배너">
+          SCHOOL MEAL SAFETY // MFDS RISK SIGNAL // MENU ADJUSTMENT // PARENT NOTICE // LIVE STATUS //
+        </section>
+
+        <section className="home-brutal-hero fade-up">
+          <div className="home-brutal-hero__media">
+            <Image src={HERO_IMAGE} alt="학교 급식 식재료 준비 장면" fill priority />
+          </div>
+          <div className="home-brutal-hero__overlay">
+            <p className="home-brutal-hero__tag">AI-powered school meal safety operations</p>
+            <h1 className="home-brutal-hero__title">SCHOOL MEAL SAFETY</h1>
+            <p className="home-brutal-hero__subtitle">
+              Detect ingredient risks, generate safer menus, and notify parents in one flow.
             </p>
-            <div className="input-row">
+            <div className="home-brutal-hero__cta">
               <Link className="btn-primary" href="/nutritionist">
-                운영 화면 시작
+                ENTER NUTRITION CENTER
               </Link>
               <Link className="btn-secondary" href="/parent">
-                학부모 화면 보기
+                OPEN PARENT FEED
               </Link>
             </div>
           </div>
-          <div className="hero-card__media">
-            <Image src={HERO_IMAGE} alt="급식 안전 운영 이미지" fill priority />
+        </section>
+
+        <section className="home-segment-rail fade-up" aria-label="운영 단계 트랙">
+          {OPERATION_STEPS.map((step) => (
+            <span className="home-segment-rail__chip" key={step}>
+              {step}
+            </span>
+          ))}
+        </section>
+
+        <section className="home-services fade-up">
+          <div className="home-services__title-wrap">
+            <h2 className="home-services__title">CORE SERVICES</h2>
+            <span className="home-services__sub">FoodSafeAI Suite</span>
           </div>
-        </section>
-
-        <section className="story-grid">
-          <article className="story-panel story-panel--image fade-up">
-            <Image
-              src={STORY_IMAGE_ONE}
-              alt="건강한 급식 재료 이미지"
-              width={720}
-              height={480}
-            />
-          </article>
-          <article className="story-panel fade-up">
-            <h2>운영 스토리</h2>
-            <p>
-              영양사는 식자재 등록부터 위험도 확인, 메뉴 대체안 구성, 공지 발행까지
-              하나의 흐름으로 수행합니다.
-            </p>
-            <p>
-              각 단계는 실무 순서로 배치되어 데모 상황에서도 빠르게 설명할 수
-              있습니다.
-            </p>
-          </article>
-          <article className="story-panel fade-up">
-            <h2>소통 스토리</h2>
-            <p>
-              학부모 화면은 오늘 안전 상태, 주요 공지, 메뉴 정보를 상단부터 순차적으로
-              보여주어 확인 부담을 줄입니다.
-            </p>
-          </article>
-          <article className="story-panel story-panel--image fade-up">
-            <Image
-              src={STORY_IMAGE_TWO}
-              alt="병원형 위생 주방 이미지"
-              width={720}
-              height={480}
-            />
-          </article>
-        </section>
-
-        <section className="story-panel fade-up">
-          <h2>해커톤 데모 시나리오</h2>
-          <div className="flow-guide">
-            <article className="flow-step">
-              <span className="flow-step__index">단계 1</span>
-              <h3>영양사 화면에서 식자재 점검</h3>
-              <p>식자재 등록 후 위해도 검사를 실행해 위험 이벤트를 즉시 확인합니다.</p>
+          <div className="home-services__grid">
+            <article className="home-services__card">
+              <h3>01 RISK DETECTION</h3>
+              <p>식약처 공개 데이터와 식자재를 교차해 위험 징후를 즉시 탐지합니다.</p>
             </article>
-            <article className="flow-step">
-              <span className="flow-step__index">단계 2</span>
-              <h3>대체 메뉴 생성 및 공지 발행</h3>
-              <p>조건 기반으로 메뉴를 생성하고 학부모에게 안전 공지를 발행합니다.</p>
+            <article className="home-services__card">
+              <h3>02 MENU ENGINE</h3>
+              <p>제약 조건 기반으로 대체 메뉴를 생성하고 알레르기 경고를 동시 반영합니다.</p>
             </article>
-            <article className="flow-step">
-              <span className="flow-step__index">단계 3</span>
-              <h3>학부모 화면에서 즉시 확인</h3>
-              <p>학부모는 위험 공지, 메뉴, 알레르기 정보를 순서대로 확인합니다.</p>
+            <article className="home-services__card">
+              <h3>03 PARENT ALERT</h3>
+              <p>학부모 화면에 안전 공지와 변경 메뉴를 빠르게 동기화합니다.</p>
             </article>
           </div>
         </section>
 
-        <section className="story-panel fade-up">
-          <h2>MFDS 공개 데이터 하이라이트</h2>
-          <p>
-            아래 목록은 지정한 식약처 공공데이터 페이지를 파싱해 가져온 최신 항목입니다.
-          </p>
-          {isLoading ? (
-            <p>데이터를 불러오는 중입니다.</p>
-          ) : (
-            <div className="dataset-grid">
-              {datasets.length === 0 ? (
-                <article className="dataset-card">
-                  <h3>데이터를 불러오지 못했습니다.</h3>
-                  <p>네트워크 상태를 확인한 뒤 다시 시도해 주세요.</p>
-                </article>
-              ) : (
-                datasets.map((dataset) => (
-                  <article className="dataset-card" key={dataset.srvcSn}>
-                    <h3>{dataset.serviceName}</h3>
-                    <div className="dataset-card__meta">
-                      {dataset.category ? <span className="pill-chip">{dataset.category}</span> : null}
-                      {dataset.provider ? <span className="pill-chip">{dataset.provider}</span> : null}
-                    </div>
-                    <p>개방일자: {dataset.openedAt ?? "미확인"}</p>
-                    {dataset.usageLink ? (
-                      <a className="role-switch__link" href={dataset.usageLink} target="_blank" rel="noreferrer">
-                        원문 보기
-                      </a>
-                    ) : null}
+        <section className="home-source-grid fade-up">
+          <div className="home-source-grid__media">
+            <Image src={TERMINAL_IMAGE} alt="학교 급식 메뉴 준비 장면" fill />
+          </div>
+          <div className="home-source-grid__content">
+            <h2>MFDS DATA HUB</h2>
+            <p>Public MFDS sources parsed for real-time school meal safety operations.</p>
+            {isLoading ? (
+              <p>데이터를 불러오는 중입니다.</p>
+            ) : (
+              <div className="dataset-grid">
+                {datasets.length === 0 ? (
+                  <article className="dataset-card">
+                    <h3>데이터를 불러오지 못했습니다.</h3>
+                    <p>네트워크 상태를 확인한 뒤 다시 시도해 주세요.</p>
                   </article>
-                ))
-              )}
-            </div>
-          )}
+                ) : (
+                  datasets.map((dataset) => (
+                    <article className="dataset-card" key={dataset.srvcSn}>
+                      <h3>{dataset.serviceName}</h3>
+                      <div className="dataset-card__meta">
+                        {dataset.category ? <span className="pill-chip">{dataset.category}</span> : null}
+                        {dataset.provider ? <span className="pill-chip">{dataset.provider}</span> : null}
+                      </div>
+                      <p>개방일자: {dataset.openedAt ?? "미확인"}</p>
+                      {dataset.usageLink ? (
+                        <a
+                          className="role-switch__link"
+                          href={dataset.usageLink}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          원문 보기
+                        </a>
+                      ) : null}
+                    </article>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
         </section>
       </div>
     </main>
