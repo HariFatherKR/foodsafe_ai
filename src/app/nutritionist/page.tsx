@@ -236,17 +236,17 @@ export default function NutritionistPage() {
       <div className="page-container">
         <HeaderRoleSwitch />
         <section className="brutal-marquee fade-up" aria-label="운영 상태 배너">
-          영양사 운영실 // 위해도 점검 // 메뉴 생성 // 학부모 공지 // 실시간 상태 //
+          NUTRITION OPS // RISK CHECK // MENU GENERATION // PARENT NOTICE // LIVE STATUS //
         </section>
         <TrustEvidenceBar syncedAt={syncedAt} fromCache={Boolean(errorMessage)} />
 
         <section className="hero-card hero-card--ops fade-up">
           <div className="hero-card__content">
-            <span className="hero-card__eyebrow">영양사 운영 플로우</span>
-            <h1>영양사 운영실</h1>
+            <span className="hero-card__eyebrow">Nutrition Operations Flow</span>
+            <h1>NUTRITION OPERATIONS</h1>
             <p>
-              위험 점검, 메뉴 조정, 학부모 공지를 하나의 흐름으로 묶어 현장에서 바로
-              실행할 수 있도록 구성했습니다.
+              Risk review, menu adjustment, and parent notice publishing are connected in one
+              execution flow.
             </p>
             <SyncStatusChip syncedAt={syncedAt} />
           </div>
@@ -257,16 +257,16 @@ export default function NutritionistPage() {
 
         <section className="ops-metrics fade-up" aria-label="핵심 운영 지표">
           <article className="ops-metrics__item">
-            <span>위해</span>
+            <span>RISK</span>
             <strong>{riskEvents.length}</strong>
           </article>
           <article className="ops-metrics__item">
-            <span>메뉴</span>
-            <strong>{menuPlan ? "준비" : "대기"}</strong>
+            <span>MENU</span>
+            <strong>{menuPlan ? "READY" : "WAIT"}</strong>
           </article>
           <article className="ops-metrics__item">
-            <span>공지</span>
-            <strong>{noticeResult ? "완료" : "대기"}</strong>
+            <span>NOTICE</span>
+            <strong>{noticeResult ? "DONE" : "PENDING"}</strong>
           </article>
         </section>
 

@@ -12,10 +12,10 @@ describe("/nutritionist page", () => {
   it("renders core dashboard panels", () => {
     render(<NutritionistPage />);
 
-    expect(screen.getByRole("heading", { name: "영양사 운영실" })).toBeInTheDocument();
-    expect(screen.getByText("위해")).toBeInTheDocument();
-    expect(screen.getByText("메뉴")).toBeInTheDocument();
-    expect(screen.getByText("공지")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "NUTRITION OPERATIONS" })).toBeInTheDocument();
+    expect(screen.getByText("RISK")).toBeInTheDocument();
+    expect(screen.getByText("MENU")).toBeInTheDocument();
+    expect(screen.getByText("NOTICE")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "식자재 등록", level: 2 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "위해도 점검", level: 2 })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "메뉴 조건 설정", level: 2 })).toBeInTheDocument();
