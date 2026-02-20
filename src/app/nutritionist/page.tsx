@@ -248,7 +248,7 @@ export default function NutritionistPage() {
               Risk review, menu adjustment, and parent notice publishing are connected in one
               execution flow.
             </p>
-            <SyncStatusChip syncedAt={syncedAt} />
+            <SyncStatusChip syncedAt={syncedAt} language="en" />
           </div>
           <div className="hero-card__media">
             <Image src={HERO_IMAGE} alt="영양사 운영 대시보드 비주얼" fill priority />

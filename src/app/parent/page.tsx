@@ -105,7 +105,11 @@ export default function ParentPage() {
               Today risk signals and menu updates are collected in one view for faster
               parent response.
             </p>
-            <SyncStatusChip syncedAt={syncedAt} fromCache={Boolean(errorMessage)} />
+            <SyncStatusChip
+              syncedAt={syncedAt}
+              fromCache={Boolean(errorMessage)}
+              language="en"
+            />
           </div>
           <div className="hero-card__media">
             <Image
