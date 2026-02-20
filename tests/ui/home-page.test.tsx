@@ -9,17 +9,30 @@ describe("/ home page", () => {
   });
 
   it("renders domain-fit hero contracts", async () => {
-    vi.spyOn(global, "fetch").mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          datasets: [],
-        }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        },
-      ),
-    );
+    vi.spyOn(global, "fetch").mockImplementation((input) => {
+      const url = typeof input === "string" ? input : input.toString();
+
+      if (url === "/api/auth/profile") {
+        return Promise.resolve(
+          new Response(JSON.stringify({ profile: null }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            datasets: [],
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      );
+    });
 
     render(<Home />);
 
@@ -30,26 +43,39 @@ describe("/ home page", () => {
   });
 
   it("renders brutal dataset cards after loading", async () => {
-    vi.spyOn(global, "fetch").mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          datasets: [
-            {
-              srvcSn: 1,
-              serviceName: "식품 회수 정보",
-              category: "식품안전",
-              provider: "식약처",
-              openedAt: "2026-01-01",
-              usageLink: "https://example.com/source",
-            },
-          ],
-        }),
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        },
-      ),
-    );
+    vi.spyOn(global, "fetch").mockImplementation((input) => {
+      const url = typeof input === "string" ? input : input.toString();
+
+      if (url === "/api/auth/profile") {
+        return Promise.resolve(
+          new Response(JSON.stringify({ profile: null }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+        );
+      }
+
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            datasets: [
+              {
+                srvcSn: 1,
+                serviceName: "식품 회수 정보",
+                category: "식품안전",
+                provider: "식약처",
+                openedAt: "2026-01-01",
+                usageLink: "https://example.com/source",
+              },
+            ],
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      );
+    });
 
     render(<Home />);
 

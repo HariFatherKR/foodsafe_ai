@@ -27,15 +27,24 @@ export async function signInWithGoogleAction(formData: FormData) {
   const callbackUrl = new URL("/auth/callback", getSiteUrl());
   callbackUrl.searchParams.set("next", next);
 
-  const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: callbackUrl.toString(),
-    },
-  });
+  let data: { url?: string | null } | null = null;
+  let error: unknown = null;
 
-  if (error || !data.url) {
+  try {
+    const supabase = await createServerSupabaseClient();
+    const result = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: callbackUrl.toString(),
+      },
+    });
+    data = result.data;
+    error = result.error;
+  } catch {
+    redirect(`/auth/login?error=oauth_config_missing&next=${encodeURIComponent(next)}`);
+  }
+
+  if (error || !data?.url) {
     redirect(`/auth/login?error=oauth_start_failed&next=${encodeURIComponent(next)}`);
   }
 

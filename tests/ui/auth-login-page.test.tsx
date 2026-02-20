@@ -40,6 +40,19 @@ describe("/auth/login page", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows configuration missing message", async () => {
+    const { default: LoginPage } = await import("@/app/auth/login/page");
+    render(
+      await LoginPage({
+        searchParams: Promise.resolve({ error: "oauth_config_missing" }),
+      }),
+    );
+
+    expect(
+      screen.getByText("OAuth 설정이 누락되어 로그인할 수 없습니다. 관리자에게 문의해 주세요."),
+    ).toBeInTheDocument();
+  });
+
   it("shows current account role when profile exists", async () => {
     getCurrentProfileMock.mockResolvedValue({
       id: "user-1",
