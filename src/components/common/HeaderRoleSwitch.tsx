@@ -13,6 +13,9 @@ export function HeaderRoleSwitch() {
         <Link className="role-switch__link" href="/parent">
           학부모 화면
         </Link>
+        <Link className="role-switch__link" href="/docs">
+          운영 문서
+        </Link>
       </div>
     </nav>
   );
