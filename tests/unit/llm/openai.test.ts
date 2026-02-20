@@ -18,7 +18,9 @@ describe("generateOpenAiMenuJson", () => {
     process.env.OPENAI_API_KEY = "test-key";
     process.env.OPENAI_MODEL = "gpt-5.2";
 
-    const fetchMock = vi.fn(async () => {
+    const fetchMock = vi.fn<
+      (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+    >(async () => {
       return new Response(
         JSON.stringify({
           choices: [
@@ -46,7 +48,9 @@ describe("generateOpenAiMenuJson", () => {
   it("sends JSON schema format and default model", async () => {
     process.env.OPENAI_API_KEY = "test-key";
 
-    const fetchMock = vi.fn(async () => {
+    const fetchMock = vi.fn<
+      (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+    >(async () => {
       return new Response(
         JSON.stringify({
           choices: [
@@ -66,7 +70,7 @@ describe("generateOpenAiMenuJson", () => {
     await generateOpenAiMenuJson("prompt for schema");
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [, options] = fetchMock.mock.calls[0] ?? [];
+    const options = fetchMock.mock.calls[0]?.[1] as RequestInit | undefined;
     const payload = JSON.parse(String(options?.body)) as {
       model: string;
       response_format: {
@@ -84,7 +88,9 @@ describe("generateOpenAiMenuJson", () => {
   it("throws when OpenAI returns non-ok status", async () => {
     process.env.OPENAI_API_KEY = "test-key";
 
-    const fetchMock = vi.fn(async () => {
+    const fetchMock = vi.fn<
+      (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>
+    >(async () => {
       return new Response("bad request", { status: 400 });
     });
     vi.stubGlobal("fetch", fetchMock);
